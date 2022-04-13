@@ -16,6 +16,8 @@ namespace NovelEngine
             Game
         }
 
+        Texture2D background;
+
         public static cScreen currentScreen; // Current Scene
 
         static void Main()
@@ -28,6 +30,9 @@ namespace NovelEngine
         {
             Raylib.InitWindow(1280, 720, "Visual Novel Engine"); // Create window
 
+            // Load textures
+            background = Raylib.LoadTexture(TechDev.IO.Loading.GetCurrentDir() + "/resources/img/bg/blank.png");
+
             currentScreen = cScreen.Intro;
 
             while (!Raylib.WindowShouldClose())
@@ -36,7 +41,7 @@ namespace NovelEngine
                 Raylib.ClearBackground(Color.WHITE);
 
                 // Write raylib renderer events past this point
-                Raylib.DrawText("Honzasko, zkontroluj si skrin. Dal jsem ti tam C4. Jo a taky jsem u tebe pod posteli ok cus", 12, 12, 20, Color.BLACK);
+                Raylib.DrawTexture(background,0,0,Color.WHITE); // Do not remove under any circumstances or this project is gonna commit die
                 SetSprite("e","e");
 
                 Raylib.EndDrawing();
@@ -80,13 +85,13 @@ namespace NovelEngine
                 case true:
                     Log.LogMessage("Loading provided image: resources/img/bg/" + background + ".png");
 
-                    if(TechDev.IO.DirectoryAndFileChecker.fileExists(TechDev.IO.Loading.GetCurrentDir() + "resources/img/bg/", background))
+                    if(TechDev.IO.DirectoryAndFileChecker.fileExists(TechDev.IO.Loading.GetCurrentDir() + "resources/img/bg/", background + ".png"))
                     {
-
+                        
                     }
                     else
                     {
-                        Log.LogError("File '" + TechDev.IO.Loading.GetCurrentDir() + "resources/img/bg/" + "' does not exist.");
+                        Log.LogError("File '" + TechDev.IO.Loading.GetCurrentDir() + "/resources/img/bg/" + "' does not exist. Perhaps the file is not a PNG?");
                     }
 
                     break;
