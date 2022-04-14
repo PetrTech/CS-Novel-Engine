@@ -11,4 +11,3 @@ After the project is opened, hit F5 and it will build now. Close the application
 <b>Thank you:</b><br/>
 Ramon Santamaria and all of the contributors for <a href="https://github.com/raysan5/raylib">Raylib</a><br/>
 Chris Dill and all of the contributors for <a href="https://github.com/ChrisDill/Raylib-cs">Raylib-cs</a> (C# Raylib bindings)
-0 comments on commit 242cffd
