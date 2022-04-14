@@ -21,6 +21,8 @@ namespace NovelEngine
 
         public cScreen currentScreen = cScreen.Intro; // Current Scene
 
+        int timeOnSplash;
+
         static void Main()
         {
             Renderer renderer = new Renderer();
@@ -60,7 +62,8 @@ namespace NovelEngine
                 switch (currentScreen)
                 {
                     case cScreen.Intro: // If current scene is the intro scene, draw the logo.
-                        Raylib.DrawTexture(logoimg, ww/2 - logoimg.width/2, wh/2 - logoimg.height/2, Raylib.Fade(Color.WHITE,));
+                        timeOnSplash++;
+                        Raylib.DrawTexture(logoimg, ww/2 - logoimg.width/2, wh/2 - logoimg.height/2, Raylib.Fade(Color.WHITE,Math.Clamp(timeOnSplash/30,0,1)));
                         break;
                 }
 
