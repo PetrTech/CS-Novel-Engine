@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Numerics;
+using System.Text;
+using System.Collections;
 using Raylib_cs;
 using TechDev.Log;
 using TechDev.IO;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace NovelEngine
 {
     class Renderer
-    {   
-        public enum cScreen{
+    {
+        public enum cScreen {
             Intro,
             Menu,
             Settings,
@@ -19,19 +23,59 @@ namespace NovelEngine
 
         Texture2D background;
 
+        Writing wr = new TechDev.IO.Writing();
+
         public cScreen currentScreen = cScreen.Intro; // Current Scene
 
         int timeOnSplash;
 
+        // JSON values
+        string splashmusic;
+        bool splashplaymusic;
+        float splashspeed;
+        bool usesplash;
+        List<int> splashcolor;
+
+        string menubackground;
+        bool menuplaymusic;
+        string menumusicasset;
+
         static void Main()
         {
             Renderer renderer = new Renderer();
+            renderer.LoadConfigs();
             renderer.Render();
+        }
+
+        public void LoadConfigs()
+        {
+            try
+            {
+                string json;
+                json = Loading.LoadFile(Loading.GetCurrentDir() + "\\resources\\cfg", "splashcfg.json");
+                var GetSplashConfig = JsonConvert.DeserializeObject<SplashConfig>(json);
+
+                splashmusic = GetSplashConfig.MusicAsset;
+                splashplaymusic = GetSplashConfig.PlayMusic;
+                splashspeed = GetSplashConfig.Speed;
+                splashcolor = GetSplashConfig.BackgroundColor;
+                usesplash = GetSplashConfig.UseSplash;
+
+                json = Loading.LoadFile(Loading.GetCurrentDir() + "\\resources\\cfg", "menucfg.json");
+                var GetMenuConfig = JsonConvert.DeserializeObject<MenuConfig>(json);
+
+                menubackground = GetMenuConfig.BackgroundAsset;
+                menuplaymusic = GetMenuConfig.PlayMusic;
+                menumusicasset = GetMenuConfig.MusicAsset;
+            }
+            catch (Exception e)
+            {
+                Log.LogError(e.ToString());
+            }
         }
 
         public void Render() // Rendering goes here (WOW HOW UNEXPECTED)
         {
-            Writing wr = new TechDev.IO.Writing();
             wr.DestroyFile(TechDev.IO.Loading.GetCurrentDir(), "traceback.txt");
 
             int ww = 1920;
@@ -57,19 +101,26 @@ namespace NovelEngine
             while (!Raylib.WindowShouldClose())
             {
                 Raylib.BeginDrawing();
-                Raylib.ClearBackground(Color.WHITE);
+                Raylib.ClearBackground(new Color(splashcolor[0], splashcolor[1], splashcolor[2], splashcolor[3]));
 
                 // Write raylib renderer events past this point
                 switch (currentScreen)
                 {
                     case cScreen.Intro: // If current scene is the intro scene, draw the logo.
-                        timeOnSplash++;
-                        Raylib.DrawTexture(logoimg, ww/2 - logoimg.width/2, wh/2 - logoimg.height/2, Raylib.Fade(Color.WHITE,(float)timeOnSplash/15));
-
-                        if(timeOnSplash > 140)
+                        if (usesplash)
                         {
-                            currentScreen = cScreen.Menu;
+                            timeOnSplash++;
+                            Raylib.DrawTexture(logoimg, ww / 2 - logoimg.width / 2, wh / 2 - logoimg.height / 2, Raylib.Fade(Color.WHITE, (float)timeOnSplash / 15));
+
+                            if (timeOnSplash > 140)
+                            {
+                                currentScreen = cScreen.Menu;
+                            }
                         }
+
+                        break;
+
+                    case cScreen.Menu:
 
                         break;
 
@@ -121,9 +172,9 @@ namespace NovelEngine
                 case true:
                     Log.LogMessage("Loading provided image: resources/img/bg/" + background + ".png");
 
-                    if(TechDev.IO.DirectoryAndFileChecker.fileExists(TechDev.IO.Loading.GetCurrentDir() + "\\resources\\img\\", background + ".png"))
+                    if (TechDev.IO.DirectoryAndFileChecker.fileExists(TechDev.IO.Loading.GetCurrentDir() + "\\resources\\img\\", background + ".png"))
                     {
-                        
+
                     }
                     else
                     {
@@ -136,5 +187,22 @@ namespace NovelEngine
                     break;
             }
         }
+    }
+
+    // Used for loading configuration (development config, not player config)
+    class SplashConfig {
+        public List<int> BackgroundColor { set; get; }
+        public float Speed { set; get; }
+        public bool PlayMusic { set; get; }
+        public string MusicAsset { set; get; }
+        public bool UseSplash { set; get; }
+    }
+
+    // Used for loading configuration (development config, not player config)
+    class MenuConfig
+    {
+        public string BackgroundAsset { set; get; }
+        public bool PlayMusic { set; get; }
+        public string MusicAsset { set; get; }
     }
 }
