@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Numerics;
 using Raylib_cs;
 using TechDev.Log;
 using TechDev.IO;
@@ -18,7 +19,7 @@ namespace NovelEngine
 
         Texture2D background;
 
-        public static cScreen currentScreen; // Current Scene
+        public cScreen currentScreen = cScreen.Intro; // Current Scene
 
         static void Main()
         {
@@ -26,14 +27,27 @@ namespace NovelEngine
             renderer.Render();
         }
 
-        public void Render()
+        public void Render() // Rendering goes here (WOW HOW UNEXPECTED)
         {
-            Raylib.InitWindow(1280, 720, "Visual Novel Engine"); // Create window
+            int ww = 1920;
+            int wh = 1080;
+            Raylib.InitWindow(ww, wh, "Visual Novel Engine"); // Create window
 
             // Load textures
-            background = Raylib.LoadTexture(TechDev.IO.Loading.GetCurrentDir() + "\\resources\\img\\bg\\blank.png");
 
-            currentScreen = cScreen.Intro;
+            // Load blank background image
+            Image bgimg = Raylib.LoadImage("resources/img/bg/blank.png");
+            background = Raylib.LoadTextureFromImage(bgimg);
+            Raylib.UnloadImage(bgimg);
+
+            // Load logo image
+            Image limg = Raylib.LoadImage("resources/img/logo.png");
+            Texture2D logoimg = Raylib.LoadTextureFromImage(limg);
+            Raylib.UnloadImage(limg);
+
+            Raylib.SetTargetFPS(30);
+
+            Raylib.ToggleFullscreen();
 
             while (!Raylib.WindowShouldClose())
             {
@@ -41,12 +55,20 @@ namespace NovelEngine
                 Raylib.ClearBackground(Color.WHITE);
 
                 // Write raylib renderer events past this point
-                Raylib.DrawTexture(background,0,0,Color.WHITE); // Do not remove under any circumstances or this project is gonna commit die
+                Raylib.DrawTexture(background, 0, 0, Color.WHITE); // Do not remove under any circumstances or this project is gonna commit die
+
+                switch (currentScreen)
+                {
+                    case cScreen.Intro: // If current scene is the intro scene, draw the logo.
+                        Raylib.DrawTexture(logoimg, ww/2 - logoimg.width/2, wh/2 - logoimg.height/2, Raylib.Fade(Color.WHITE,));
+                        break;
+                }
 
                 Raylib.EndDrawing();
             }
 
             Raylib.UnloadTexture(background);
+            Raylib.UnloadTexture(logoimg);
             Raylib.CloseWindow();
         }
 
@@ -77,7 +99,7 @@ namespace NovelEngine
             }
         }
 
-        public void SetBackground(string background)
+        public void SetBackground(string background, bool fade)
         {
             // Check if current scene is the game scene, if not, print an error message in the console
             switch (InGame())
