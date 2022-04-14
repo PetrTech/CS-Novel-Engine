@@ -95,6 +95,11 @@ namespace NovelEngine
             Texture2D logoimg = Raylib.LoadTextureFromImage(limg);
             Raylib.UnloadImage(limg);
 
+            // Load menu background image
+            Image mimg = Raylib.LoadImage("resources/img/bg/" + menubackground);
+            Texture2D menubgart = Raylib.LoadTextureFromImage(mimg);
+            Raylib.UnloadImage(mimg);
+
             // Load audio
 
             // Load splash audio
@@ -137,10 +142,11 @@ namespace NovelEngine
 
                     case cScreen.Menu:
                         Raylib.UpdateMusicStream(menumusic);
-                        if (!Raylib.IsMusicStreamPlaying(menumusic))
+                        if (!Raylib.IsMusicStreamPlaying(menumusic) && menuplaymusic)
                         {
                             Raylib.PlayMusicStream(menumusic);
                         }
+                        Raylib.DrawTexture(menubgart, 0, 0, Color.WHITE);
                         break;
 
                     case cScreen.Game:
@@ -153,6 +159,7 @@ namespace NovelEngine
 
             Raylib.UnloadTexture(background);
             Raylib.UnloadTexture(logoimg);
+            Raylib.UnloadTexture(menubgart);
             Raylib.UnloadSound(splashmusicaudio);
             Raylib.UnloadMusicStream(menumusic);
 
