@@ -81,6 +81,7 @@ namespace NovelEngine
             int ww = 1920;
             int wh = 1080;
             Raylib.InitWindow(ww, wh, "Visual Novel Engine"); // Create window
+            Raylib.InitAudioDevice();
 
             // Load textures
 
@@ -94,9 +95,22 @@ namespace NovelEngine
             Texture2D logoimg = Raylib.LoadTextureFromImage(limg);
             Raylib.UnloadImage(limg);
 
+            // Load audio
+
+            // Load splash audio
+            Sound splashmusicaudio = Raylib.LoadSound("resources/sfx/music/" + splashmusic);
+
+            // Loud menu music
+            Music menumusic = Raylib.LoadMusicStream("resources/sfx/music/" + menumusicasset);
+
             Raylib.SetTargetFPS(30);
 
             Raylib.ToggleFullscreen();
+
+            if (splashplaymusic && usesplash)
+            {
+                Raylib.PlaySound(splashmusicaudio);
+            }
 
             while (!Raylib.WindowShouldClose())
             {
@@ -110,6 +124,7 @@ namespace NovelEngine
                         if (usesplash)
                         {
                             timeOnSplash++;
+
                             Raylib.DrawTexture(logoimg, ww / 2 - logoimg.width / 2, wh / 2 - logoimg.height / 2, Raylib.Fade(Color.WHITE, (float)timeOnSplash / 15));
 
                             if (timeOnSplash > 140)
@@ -121,7 +136,11 @@ namespace NovelEngine
                         break;
 
                     case cScreen.Menu:
-
+                        Raylib.UpdateMusicStream(menumusic);
+                        if (!Raylib.IsMusicStreamPlaying(menumusic))
+                        {
+                            Raylib.PlayMusicStream(menumusic);
+                        }
                         break;
 
                     case cScreen.Game:
@@ -134,6 +153,10 @@ namespace NovelEngine
 
             Raylib.UnloadTexture(background);
             Raylib.UnloadTexture(logoimg);
+            Raylib.UnloadSound(splashmusicaudio);
+            Raylib.UnloadMusicStream(menumusic);
+
+            Raylib.CloseAudioDevice();
             Raylib.CloseWindow();
         }
 
