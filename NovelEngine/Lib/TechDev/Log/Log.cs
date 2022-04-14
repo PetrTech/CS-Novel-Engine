@@ -17,19 +17,25 @@ namespace TechDev.Log
         public static void LogError(string msg)
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("[{0}] - {1}. See traceback.txt for more info", DateTime.Now.ToString("HH:mm:ss:fff"), msg);
+            Console.WriteLine("[ERROR {0}] - {1}. See traceback.txt for more info", DateTime.Now.ToString("HH:mm:ss:fff"), msg);
+            Writing wr = new Writing();
+            wr.AppendToFile(IO.Loading.GetCurrentDir(),"traceback.txt",string.Format("[ERR {0}] - {1}." + Environment.NewLine, DateTime.Now.ToString("HH:mm:ss:fff"), msg));
         }
 
         public static void LogMessage(string msg)
         {
             Console.ForegroundColor = ConsoleColor.DarkBlue;
-            Console.WriteLine("[{0}] - {1}. See traceback.txt for more info", DateTime.Now.ToString("HH:mm:ss:fff"), msg);
+            Console.WriteLine("[MESSAGE {0}] - {1}. See traceback.txt for more info", DateTime.Now.ToString("HH:mm:ss:fff"), msg);
+            Writing wr = new Writing();
+            wr.AppendToFile(IO.Loading.GetCurrentDir(), "traceback.txt", string.Format("[LOG {0}] - {1}." + Environment.NewLine, DateTime.Now.ToString("HH:mm:ss:fff"), msg));
         }
 
         public static void LogWarning(string msg)
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("[{0}] - {1}. See traceback.txt for more info", DateTime.Now.ToString("HH:mm:ss:fff"), msg);
+            Console.WriteLine("[WARNING {0}] - {1}. See traceback.txt for more info", DateTime.Now.ToString("HH:mm:ss:fff"), msg);
+            Writing wr = new Writing();
+            wr.AppendToFile(IO.Loading.GetCurrentDir(), "traceback.txt", string.Format("[WARN {0}] - {1}." + Environment.NewLine, DateTime.Now.ToString("HH:mm:ss:fff"), msg));
         }
     }
 }

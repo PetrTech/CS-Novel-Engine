@@ -31,6 +31,9 @@ namespace NovelEngine
 
         public void Render() // Rendering goes here (WOW HOW UNEXPECTED)
         {
+            Writing wr = new TechDev.IO.Writing();
+            wr.DestroyFile(TechDev.IO.Loading.GetCurrentDir(), "traceback.txt");
+
             int ww = 1920;
             int wh = 1080;
             Raylib.InitWindow(ww, wh, "Visual Novel Engine"); // Create window
@@ -57,13 +60,21 @@ namespace NovelEngine
                 Raylib.ClearBackground(Color.WHITE);
 
                 // Write raylib renderer events past this point
-                Raylib.DrawTexture(background, 0, 0, Color.WHITE); // Do not remove under any circumstances or this project is gonna commit die
-
                 switch (currentScreen)
                 {
                     case cScreen.Intro: // If current scene is the intro scene, draw the logo.
                         timeOnSplash++;
-                        Raylib.DrawTexture(logoimg, ww/2 - logoimg.width/2, wh/2 - logoimg.height/2, Raylib.Fade(Color.WHITE,Math.Clamp(timeOnSplash/30,0,1)));
+                        Raylib.DrawTexture(logoimg, ww/2 - logoimg.width/2, wh/2 - logoimg.height/2, Raylib.Fade(Color.WHITE,(float)timeOnSplash/15));
+
+                        if(timeOnSplash > 140)
+                        {
+                            currentScreen = cScreen.Menu;
+                        }
+
+                        break;
+
+                    case cScreen.Game:
+                        Raylib.DrawTexture(background, 0, 0, Color.WHITE); // Do not remove under any circumstances or this project is gonna commit die
                         break;
                 }
 
